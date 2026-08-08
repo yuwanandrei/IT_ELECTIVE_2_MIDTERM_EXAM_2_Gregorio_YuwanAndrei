@@ -1,7 +1,51 @@
 @{
     ViewData["Title"] = "Home";
+    var isAuthed = User.Identity != null && User.Identity.IsAuthenticated;
 }
-<div class="text-center py-5">
-    <h1>Clinic Patient Visit Monitoring System</h1>
-    <p class="lead">Please log in to continue.</p>
+<div class="hero">
+    <div>
+        <span class="section-eyebrow">Front-desk &amp; consultation tracking</span>
+        <h1 class="mt-2">Every patient visit, tracked from arrival to consultation.</h1>
+        <p class="lead">
+            Register walk-ins, follow-ups and referrals in seconds, watch who's waiting versus
+            in consultation, and close the loop the moment a physician finishes — all from one
+            monitoring list.
+        </p>
+        <div class="hero-actions">
+            @if (isAuthed)
+            {
+                <a asp-controller="PatientVisit" asp-action="Index" class="btn btn-primary btn-lg"><i class="bi bi-clipboard2-pulse me-2"></i>Open Monitoring List</a>
+                <a asp-controller="PatientVisit" asp-action="Create" class="btn btn-secondary btn-lg"><i class="bi bi-plus-lg me-2"></i>Register a Visit</a>
+            }
+            else
+            {
+                <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-lg"><i class="bi bi-box-arrow-in-right me-2"></i>Log In</a>
+                <a asp-controller="Account" asp-action="Register" class="btn btn-secondary btn-lg"><i class="bi bi-person-plus me-2"></i>Create an Account</a>
+            }
+        </div>
+    </div>
+    <div class="hero-panel">
+        <span class="section-eyebrow" style="color:#BFF3EC">Live status</span>
+        <h3 class="mt-2 mb-1" style="color:#fff">Waiting room snapshot</h3>
+        <p class="mb-0" style="color:rgba(255,255,255,.75); font-size:.9rem;">A quick read of how the floor is moving right now.</p>
+        <div class="pulse-line mt-3">
+            <svg viewBox="0 0 400 20" preserveAspectRatio="none">
+                <path d="M0 10 H150 L164 10 L174 2 L184 18 L194 10 H400" />
+            </svg>
+        </div>
+        <div class="hero-stat-row">
+            <div class="hero-mini-card hero-stat">
+                <span>Waiting</span>
+                <b><i class="bi bi-hourglass-split"></i></b>
+            </div>
+            <div class="hero-mini-card hero-stat">
+                <span>In consultation</span>
+                <b><i class="bi bi-activity"></i></b>
+            </div>
+            <div class="hero-mini-card hero-stat">
+                <span>Completed</span>
+                <b><i class="bi bi-check2-circle"></i></b>
+            </div>
+        </div>
+    </div>
 </div>

@@ -1,39 +1,71 @@
 @model PatientVisit
 @{
     ViewData["Title"] = "Visit Details";
+    var badgeClass = Model.Status switch
+    {
+        VisitStatus.Waiting => "status-waiting",
+        VisitStatus.InConsultation => "status-inconsultation",
+        VisitStatus.Completed => "status-completed",
+        _ => "status-waiting"
+    };
+    var initials = (Model.FirstName.Length > 0 ? Model.FirstName.Substring(0,1) : "") + (Model.LastName.Length > 0 ? Model.LastName.Substring(0,1) : "");
 }
-<h3 class="mb-4">Visit Details - @Model.VisitNumber</h3>
-<div class="card">
-    <div class="card-body">
-        <dl class="row">
-            <dt class="col-sm-4">Visit Number</dt>
-            <dd class="col-sm-8">@Model.VisitNumber</dd>
-            <dt class="col-sm-4">Patient</dt>
-            <dd class="col-sm-8">@Model.FullName</dd>
-            <dt class="col-sm-4">Age</dt>
-            <dd class="col-sm-8">@Model.Age</dd>
-            <dt class="col-sm-4">Sex</dt>
-            <dd class="col-sm-8">@Model.Sex</dd>
-            <dt class="col-sm-4">Contact Number</dt>
-            <dd class="col-sm-8">@Model.ContactNumber</dd>
-            <dt class="col-sm-4">Address</dt>
-            <dd class="col-sm-8">@Model.Address</dd>
-            <dt class="col-sm-4">Physician</dt>
-            <dd class="col-sm-8">@Model.Physician</dd>
-            <dt class="col-sm-4">Visit Type</dt>
-            <dd class="col-sm-8">@Model.VisitType</dd>
-            <dt class="col-sm-4">Arrival Date &amp; Time</dt>
-            <dd class="col-sm-8">@Model.ArrivalDateTime.ToString("g")</dd>
-            <dt class="col-sm-4">Consultation End Time</dt>
-            <dd class="col-sm-8">@(Model.ConsultationCompletedDateTime?.ToString("g") ?? "-")</dd>
-            <dt class="col-sm-4">Status</dt>
-            <dd class="col-sm-8">@Model.Status</dd>
-            <dt class="col-sm-4">Chief Complaint</dt>
-            <dd class="col-sm-8">@Model.ChiefComplaint</dd>
-            <dt class="col-sm-4">Notes</dt>
-            <dd class="col-sm-8">@(string.IsNullOrWhiteSpace(Model.Notes) ? "-" : Model.Notes)</dd>
+<div class="mt-4 mb-4">
+    <span class="section-eyebrow">Visit record</span>
+    <h3 class="mt-1">Visit Details</h3>
+</div>
+<div class="card overflow-hidden">
+    <div class="profile-banner">
+        <span class="profile-avatar">@initials</span>
+        <div class="flex-grow-1">
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <h4 class="mb-0" style="color:#fff;">@Model.FullName</h4>
+                <span class="badge @badgeClass">@Model.Status</span>
+            </div>
+            <div style="color: rgba(255,255,255,.75); font-size:.88rem;">
+                <span class="visit-tag" style="background:rgba(255,255,255,.15); color:#fff;">@Model.VisitNumber</span>
+                &middot; @Model.Age yrs &middot; @Model.Sex &middot; @Model.VisitType
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <dl class="detail-grid mb-0">
+            <div class="detail-item">
+                <dt>Contact Number</dt>
+                <dd>@Model.ContactNumber</dd>
+            </div>
+            <div class="detail-item">
+                <dt>Address</dt>
+                <dd>@Model.Address</dd>
+            </div>
+            <div class="detail-item">
+                <dt>Physician</dt>
+                <dd>@Model.Physician</dd>
+            </div>
+            <div class="detail-item">
+                <dt>Visit Type</dt>
+                <dd>@Model.VisitType</dd>
+            </div>
+            <div class="detail-item">
+                <dt>Arrival Date &amp; Time</dt>
+                <dd>@Model.ArrivalDateTime.ToString("g")</dd>
+            </div>
+            <div class="detail-item">
+                <dt>Consultation End Time</dt>
+                <dd>@(Model.ConsultationCompletedDateTime?.ToString("g") ?? "-")</dd>
+            </div>
+            <div class="detail-item">
+                <dt>Chief Complaint</dt>
+                <dd>@Model.ChiefComplaint</dd>
+            </div>
+            <div class="detail-item">
+                <dt>Notes</dt>
+                <dd>@(string.IsNullOrWhiteSpace(Model.Notes) ? "-" : Model.Notes)</dd>
+            </div>
         </dl>
-        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary">Edit</a>
+        <div class="p-4 pt-3 d-flex gap-2">
+            <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left me-2"></i>Back to List</a>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary"><i class="bi bi-pencil me-2"></i>Edit</a>
+        </div>
     </div>
 </div>

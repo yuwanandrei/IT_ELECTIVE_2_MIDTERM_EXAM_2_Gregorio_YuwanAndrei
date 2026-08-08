@@ -2,13 +2,25 @@
 @{
     ViewData["Title"] = "Complete Consultation";
 }
-<h3 class="mb-4">Complete Consultation</h3>
-<div class="card">
-    <div class="card-body">
-        <p>Mark the consultation for <strong>@Model.FullName</strong> (Visit @Model.VisitNumber) with physician <strong>@Model.Physician</strong> as completed?</p>
-        <form asp-action="Complete" asp-route-id="@Model.Id" method="post">
-            <button type="submit" class="btn btn-success">Confirm Completion</button>
-            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-        </form>
+<div class="row justify-content-center mt-4">
+    <div class="col-md-7">
+        <div class="card text-center">
+            <div class="card-body py-5">
+                <div class="mx-auto mb-3 d-inline-flex align-items-center justify-content-center"
+                     style="width:60px;height:60px;border-radius:16px;background:var(--teal-100);color:var(--teal-700);font-size:1.6rem;">
+                    <i class="bi bi-check2-circle"></i>
+                </div>
+                <h3 class="card-title">Complete Consultation</h3>
+                <p class="mb-4" style="color: var(--ink-500);">
+                    Mark the consultation for <strong style="color: var(--ink-900);">@Model.FullName</strong>
+                    (visit <span class="visit-tag">@Model.VisitNumber</span>) with physician
+                    <strong style="color: var(--ink-900);">@Model.Physician</strong> as completed?
+                </p>
+                <form asp-action="Complete" asp-route-id="@Model.Id" method="post" class="d-flex justify-content-center gap-2">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-2"></i>Confirm Completion</button>
+                    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
     </div>
 </div>

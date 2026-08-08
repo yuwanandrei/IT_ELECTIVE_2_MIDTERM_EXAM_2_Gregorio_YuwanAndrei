@@ -1,82 +1,147 @@
 @model List<PatientVisit>
 @{
     ViewData["Title"] = "Patient Monitoring";
+    var waitingCount = Model.Count(v => v.Status == VisitStatus.Waiting);
+    var progressCount = Model.Count(v => v.Status == VisitStatus.InConsultation);
+    var completedCount = Model.Count(v => v.Status == VisitStatus.Completed);
 }
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h3>Patient Monitoring List</h3>
-    <a asp-action="Create" class="btn btn-success">Register Patient Visit</a>
+<div class="d-flex justify-content-between align-items-end flex-wrap gap-2 mt-4 mb-4">
+    <div>
+        <span class="section-eyebrow">Today's floor</span>
+        <h3 class="mt-1 mb-0">Patient Monitoring List</h3>
+    </div>
+    <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg me-2"></i>Register Patient Visit</a>
 </div>
-<form asp-action="Index" method="get" class="row g-2 mb-3">
-    <div class="col-md-4">
-        <input type="text" name="searchTerm" value="@ViewData["SearchTerm"]" class="form-control" placeholder="Search by visit number, name, physician, status" />
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="stat-pill">
+            <span class="stat-icon icon-total"><i class="bi bi-people-fill"></i></span>
+            <div>
+                <div class="stat-number">@Model.Count</div>
+                <div class="stat-label">Total visits</div>
+            </div>
+        </div>
     </div>
-    <div class="col-md-2">
-        <button type="submit" class="btn btn-outline-primary">Search</button>
+    <div class="col-6 col-lg-3">
+        <div class="stat-pill">
+            <span class="stat-icon icon-waiting"><i class="bi bi-hourglass-split"></i></span>
+            <div>
+                <div class="stat-number">@waitingCount</div>
+                <div class="stat-label">Waiting</div>
+            </div>
+        </div>
     </div>
-    <div class="col-md-2">
-        <a asp-action="Index" class="btn btn-outline-secondary">Clear</a>
+    <div class="col-6 col-lg-3">
+        <div class="stat-pill">
+            <span class="stat-icon icon-progress"><i class="bi bi-activity"></i></span>
+            <div>
+                <div class="stat-number">@progressCount</div>
+                <div class="stat-label">In consultation</div>
+            </div>
+        </div>
     </div>
-</form>
-<div class="table-responsive">
-    <table class="table table-striped table-hover align-middle">
-        <thead class="table-dark">
-            <tr>
-                <th>Visit Number</th>
-                <th>Patient</th>
-                <th>Physician</th>
-                <th>Visit Type</th>
-                <th>Arrival Time</th>
-                <th>Consultation End Time</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model.Count == 0)
-            {
+    <div class="col-6 col-lg-3">
+        <div class="stat-pill">
+            <span class="stat-icon icon-completed"><i class="bi bi-check2-circle"></i></span>
+            <div>
+                <div class="stat-number">@completedCount</div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="search-bar mb-4">
+    <form asp-action="Index" method="get" class="row g-2 align-items-center">
+        <div class="col-md-8">
+            <div class="input-icon-group">
+                <i class="bi bi-search"></i>
+                <input type="text" name="searchTerm" value="@ViewData["SearchTerm"]" class="form-control" placeholder="Search by visit number, name, physician, status" />
+            </div>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Search</button>
+        </div>
+        <div class="col-md-2">
+            <a asp-action="Index" class="btn btn-outline-secondary w-100">Clear</a>
+        </div>
+    </form>
+</div>
+
+<div class="table-card">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
                 <tr>
-                    <td colspan="8" class="text-center">No patient visits found.</td>
+                    <th>Visit Number</th>
+                    <th>Patient</th>
+                    <th>Physician</th>
+                    <th>Visit Type</th>
+                    <th>Arrival Time</th>
+                    <th>Consultation End Time</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                 </tr>
-            }
-            @foreach (var visit in Model)
-            {
-                <tr>
-                    <td>@visit.VisitNumber</td>
-                    <td>@visit.FullName</td>
-                    <td>@visit.Physician</td>
-                    <td>@visit.VisitType</td>
-                    <td>@visit.ArrivalDateTime.ToString("g")</td>
-                    <td>@(visit.ConsultationCompletedDateTime?.ToString("g") ?? "-")</td>
-                    <td>
-                        @{
-                            var badgeClass = visit.Status switch
-                            {
-                                VisitStatus.Waiting => "bg-warning text-dark",
-                                VisitStatus.InConsultation => "bg-info text-dark",
-                                VisitStatus.Completed => "bg-success",
-                                _ => "bg-secondary"
-                            };
-                        }
-                        <span class="badge @badgeClass">@visit.Status</span>
-                    </td>
-                    <td>
-                        <div class="btn-group btn-group-sm">
-                            <a asp-action="Details" asp-route-id="@visit.Id" class="btn btn-outline-primary">Details</a>
-                            <a asp-action="Edit" asp-route-id="@visit.Id" class="btn btn-outline-secondary">Edit</a>
-                            @if (visit.Status == VisitStatus.Waiting)
-                            {
-                                <form asp-action="StartConsultation" asp-route-id="@visit.Id" method="post" class="d-inline">
-                                    <button type="submit" class="btn btn-outline-info">Start</button>
-                                </form>
+            </thead>
+            <tbody>
+                @if (Model.Count == 0)
+                {
+                    <tr>
+                        <td colspan="8" class="text-center py-5">
+                            <i class="bi bi-clipboard-x" style="font-size:1.6rem; color: var(--ink-300);"></i>
+                            <div class="mt-2" style="color: var(--ink-500);">No patient visits found.</div>
+                        </td>
+                    </tr>
+                }
+                @foreach (var visit in Model)
+                {
+                    <tr>
+                        <td><span class="visit-tag">@visit.VisitNumber</span></td>
+                        <td>
+                            <div class="patient-cell">
+                                <span class="patient-avatar">@(visit.FirstName.Length > 0 ? visit.FirstName.Substring(0,1) : "")@(visit.LastName.Length > 0 ? visit.LastName.Substring(0,1) : "")</span>
+                                <div>
+                                    <div class="fw-semibold" style="color: var(--ink-900);">@visit.FullName</div>
+                                    <div style="font-size:.78rem; color: var(--ink-300);">@visit.Age yrs &middot; @visit.Sex</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>@visit.Physician</td>
+                        <td>@visit.VisitType</td>
+                        <td>@visit.ArrivalDateTime.ToString("g")</td>
+                        <td>@(visit.ConsultationCompletedDateTime?.ToString("g") ?? "-")</td>
+                        <td>
+                            @{
+                                var badgeClass = visit.Status switch
+                                {
+                                    VisitStatus.Waiting => "status-waiting",
+                                    VisitStatus.InConsultation => "status-inconsultation",
+                                    VisitStatus.Completed => "status-completed",
+                                    _ => "status-waiting"
+                                };
                             }
-                            @if (visit.Status != VisitStatus.Completed)
-                            {
-                                <a asp-action="Complete" asp-route-id="@visit.Id" class="btn btn-outline-success">Complete</a>
-                            }
-                        </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                            <span class="badge @badgeClass">@visit.Status</span>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a asp-action="Details" asp-route-id="@visit.Id" class="btn btn-outline-primary" title="Details"><i class="bi bi-eye"></i></a>
+                                <a asp-action="Edit" asp-route-id="@visit.Id" class="btn btn-outline-secondary" title="Edit"><i class="bi bi-pencil"></i></a>
+                                @if (visit.Status == VisitStatus.Waiting)
+                                {
+                                    <form asp-action="StartConsultation" asp-route-id="@visit.Id" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-outline-info" title="Start"><i class="bi bi-play-fill"></i></button>
+                                    </form>
+                                }
+                                @if (visit.Status != VisitStatus.Completed)
+                                {
+                                    <a asp-action="Complete" asp-route-id="@visit.Id" class="btn btn-outline-success" title="Complete"><i class="bi bi-check-lg"></i></a>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
