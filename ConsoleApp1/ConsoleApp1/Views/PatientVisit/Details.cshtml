@@ -1,0 +1,39 @@
+@model PatientVisit
+@{
+    ViewData["Title"] = "Visit Details";
+}
+<h3 class="mb-4">Visit Details - @Model.VisitNumber</h3>
+<div class="card">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-4">Visit Number</dt>
+            <dd class="col-sm-8">@Model.VisitNumber</dd>
+            <dt class="col-sm-4">Patient</dt>
+            <dd class="col-sm-8">@Model.FullName</dd>
+            <dt class="col-sm-4">Age</dt>
+            <dd class="col-sm-8">@Model.Age</dd>
+            <dt class="col-sm-4">Sex</dt>
+            <dd class="col-sm-8">@Model.Sex</dd>
+            <dt class="col-sm-4">Contact Number</dt>
+            <dd class="col-sm-8">@Model.ContactNumber</dd>
+            <dt class="col-sm-4">Address</dt>
+            <dd class="col-sm-8">@Model.Address</dd>
+            <dt class="col-sm-4">Physician</dt>
+            <dd class="col-sm-8">@Model.Physician</dd>
+            <dt class="col-sm-4">Visit Type</dt>
+            <dd class="col-sm-8">@Model.VisitType</dd>
+            <dt class="col-sm-4">Arrival Date &amp; Time</dt>
+            <dd class="col-sm-8">@Model.ArrivalDateTime.ToString("g")</dd>
+            <dt class="col-sm-4">Consultation End Time</dt>
+            <dd class="col-sm-8">@(Model.ConsultationCompletedDateTime?.ToString("g") ?? "-")</dd>
+            <dt class="col-sm-4">Status</dt>
+            <dd class="col-sm-8">@Model.Status</dd>
+            <dt class="col-sm-4">Chief Complaint</dt>
+            <dd class="col-sm-8">@Model.ChiefComplaint</dd>
+            <dt class="col-sm-4">Notes</dt>
+            <dd class="col-sm-8">@(string.IsNullOrWhiteSpace(Model.Notes) ? "-" : Model.Notes)</dd>
+        </dl>
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary">Edit</a>
+    </div>
+</div>

@@ -1,0 +1,82 @@
+@model List<PatientVisit>
+@{
+    ViewData["Title"] = "Patient Monitoring";
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>Patient Monitoring List</h3>
+    <a asp-action="Create" class="btn btn-success">Register Patient Visit</a>
+</div>
+<form asp-action="Index" method="get" class="row g-2 mb-3">
+    <div class="col-md-4">
+        <input type="text" name="searchTerm" value="@ViewData["SearchTerm"]" class="form-control" placeholder="Search by visit number, name, physician, status" />
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-outline-primary">Search</button>
+    </div>
+    <div class="col-md-2">
+        <a asp-action="Index" class="btn btn-outline-secondary">Clear</a>
+    </div>
+</form>
+<div class="table-responsive">
+    <table class="table table-striped table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Visit Number</th>
+                <th>Patient</th>
+                <th>Physician</th>
+                <th>Visit Type</th>
+                <th>Arrival Time</th>
+                <th>Consultation End Time</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Count == 0)
+            {
+                <tr>
+                    <td colspan="8" class="text-center">No patient visits found.</td>
+                </tr>
+            }
+            @foreach (var visit in Model)
+            {
+                <tr>
+                    <td>@visit.VisitNumber</td>
+                    <td>@visit.FullName</td>
+                    <td>@visit.Physician</td>
+                    <td>@visit.VisitType</td>
+                    <td>@visit.ArrivalDateTime.ToString("g")</td>
+                    <td>@(visit.ConsultationCompletedDateTime?.ToString("g") ?? "-")</td>
+                    <td>
+                        @{
+                            var badgeClass = visit.Status switch
+                            {
+                                VisitStatus.Waiting => "bg-warning text-dark",
+                                VisitStatus.InConsultation => "bg-info text-dark",
+                                VisitStatus.Completed => "bg-success",
+                                _ => "bg-secondary"
+                            };
+                        }
+                        <span class="badge @badgeClass">@visit.Status</span>
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <a asp-action="Details" asp-route-id="@visit.Id" class="btn btn-outline-primary">Details</a>
+                            <a asp-action="Edit" asp-route-id="@visit.Id" class="btn btn-outline-secondary">Edit</a>
+                            @if (visit.Status == VisitStatus.Waiting)
+                            {
+                                <form asp-action="StartConsultation" asp-route-id="@visit.Id" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-outline-info">Start</button>
+                                </form>
+                            }
+                            @if (visit.Status != VisitStatus.Completed)
+                            {
+                                <a asp-action="Complete" asp-route-id="@visit.Id" class="btn btn-outline-success">Complete</a>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
